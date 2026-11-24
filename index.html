@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketplace Deal Tracker</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <h1>Marketplace Deal Tracker</h1>
+  <div class="top-actions">
+    <div class="menu">
+      <button class="btn" id="btnExport" aria-haspopup="true">Exportar</button>
+      <div class="menu-list" id="exportMenu" hidden>
+        <button data-exp="txt">TXT</button>
+        <button data-exp="json">JSON (respaldo)</button>
+        <button data-exp="pdf">PDF</button>
+        <button data-exp="import">Importar JSON</button>
+      </div>
+    </div>
+    <button class="btn" id="btnTheme" aria-label="Cambiar tema">Modo oscuro</button>
+    <input type="file" id="fileImport" accept=".json" hidden>
+  </div>
+</header>
+
+<main>
+  <!-- Dashboard -->
+  <section class="dash" aria-label="Resumen">
+    <div class="kpi budget">
+      <label for="budgetInput">Presupuesto inicial (Q)</label>
+      <input type="number" id="budgetInput" min="0" step="any">
+    </div>
+    <div class="kpi"><span>Total gastado</span><b id="kSpent"></b></div>
+    <div class="kpi"><span>Disponible</span><b id="kLeft"></b></div>
+    <div class="kpi"><span>Productos</span><b id="kCount"></b></div>
+    <div class="kpi"><span>Ahorro acumulado</span><b id="kSaved"></b></div>
+    <div class="progress-wrap">
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="bar"></i></div>
+      <small id="barText"></small>
+    </div>
+  </section>
+
+  <section class="stats" id="stats" aria-label="Estadísticas"></section>
+
+  <!-- Controles -->
+  <section class="toolbar">
+    <input type="search" id="q" placeholder="Buscar por título, descripción o estado" aria-label="Buscar">
+    <select id="fStatus" aria-label="Estado"></select>
+    <select id="fPrio" aria-label="Prioridad"></select>
+    <select id="fShip" aria-label="Envío">
+      <option value="">Todos los envíos</option>
+      <option value="con">Con envío</option>
+      <option value="sin">Sin envío</option>
+    </select>
+    <select id="fBought" aria-label="Compra">
+      <option value="">Comprado y pendiente</option>
+      <option value="comprado">Comprado</option>
+      <option value="pendiente">Pendiente</option>
+    </select>
+    <select id="sort" aria-label="Ordenar">
+      <option value="new">Más reciente</option>
+      <option value="old">Más antiguo</option>
+      <option value="low">Precio más bajo</option>
+      <option value="high">Precio más alto</option>
+      <option value="sMax">Mayor ahorro</option>
+      <option value="sMin">Menor ahorro</option>
+    </select>
+    <button class="btn primary" id="btnAdd">+ Agregar producto</button>
+  </section>
+
+  <p class="count" id="count" hidden></p>
+
+  <section class="grid" id="grid" aria-live="polite"></section>
+
+  <section class="empty" id="empty" hidden>
+    <p>Aún no has agregado oportunidades de compra.</p>
+    <button class="btn primary" id="btnFirst">Agregar Primer Producto</button>
+  </section>
+</main>
+
+<!-- Modal formulario -->
+<dialog id="dlgForm">
+  <form id="form" method="dialog">
+    <h2 id="formTitle">Nuevo producto</h2>
+    <label>Título <input name="title" required maxlength="80"></label>
+    <label>Descripción corta <input name="desc" maxlength="160"></label>
+    <label>Imagen: subir desde tu equipo <input name="imgFile" type="file" accept="image/*"></label>
+    <label>o pegar URL de imagen <input name="img" type="url" placeholder="https://..."></label>
+    <div class="row">
+      <label>Precio oferta (Q) <input name="price" type="number" min="0" step="any" required></label>
+      <label>Precio mercado (Q) <input name="market" type="number" min="0" step="any"></label>
+    </div>
+    <div class="row">
+      <label>Envío
+        <select name="shipMode">
+          <option value="paid">Con costo</option>
+          <option value="free">Gratis</option>
+          <option value="none">Sin envío (recoger en persona)</option>
+        </select>
+      </label>
+      <label>Costo de envío (Q) <input name="ship" type="number" min="0" step="any" value="0"></label>
+    </div>
+    <label>Link de la publicación <input name="link" type="url" placeholder="https://facebook.com/marketplace/item/..."></label>
+    <div class="row">
+      <label>Estado <select name="status"></select></label>
+      <label>Prioridad <select name="prio"></select></label>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn" id="formCancel">Cancelar</button>
+      <button type="submit" class="btn primary">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal confirmación -->
+<dialog id="dlgConfirm">
+  <h2>¿Eliminar producto?</h2>
+  <p id="confirmText"></p>
+  <div class="actions">
+    <button class="btn" id="confirmNo">Cancelar</button>
+    <button class="btn danger" id="confirmYes">Eliminar</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
